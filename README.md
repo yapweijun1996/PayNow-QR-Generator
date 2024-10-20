@@ -39,6 +39,9 @@ Basic knowledge of HTML, CSS, and JavaScript<br>
 ### Codepen
 https://codepen.io/yapweijun1996/pen/oNKeBLz
 
+### Github
+https://yapweijun1996.github.io/PayNow-QR-Generator/
+
 
 <img width="411" alt="Paynow QR Generator yapweijun1996" src="https://github.com/user-attachments/assets/6a3d9ec4-85f5-4103-91c8-a8be702d1071">
 
