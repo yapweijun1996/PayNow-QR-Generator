@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PayNow QR Generator</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="./js/paynowqr.min.js"></script>
+    <script src="./js/jquery.min.js"></script>
+    <script src="./js/qrious.min.js"></script>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f9;
+        margin: 0;
+        padding: 20px;
+      }
+      .container {
+        max-width: 512px;
+        margin: auto;
+        padding: 20px;
+        background-color: #ffffff;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+      }
+      h1 {
+        text-align: center;
+        color: #333;
+      }
+      div {
+        margin-bottom: 15px;
+      }
+      label {
+        display: block;
+        margin-bottom: 5px;
+        color: #555;
+      }
+      input[type="text"],
+      input[type="number"],
+      input[type="date"] {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        box-sizing: border-box;
+      }
+      button {
+        width: 100%;
+        padding: 10px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
+      }
+      button:hover {
+        background-color: #0056b3;
+      }
+      #qr-code {
+        text-align: center;
+        margin-top: 20px;
+        position: relative;
+      }
+      canvas {
+        border: 1px solid #ddd;
+        display: none;
+      }
+      #success-message {
+        display: none;
+        color: green;
+        text-align: center;
+        padding-top: 15px;
+        font-weight: 600;
+      }
+      #error-message {
+        display: none;
+        color: red;
+        text-align: center;
+        padding-top: 15px;
+        font-weight: 600;
+      }
+      @media (max-width: 512px) {
+        .container {
+          padding: 15px;
+        }
+        button {
+          font-size: 14px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>PayNow QR Generator</h1>
+      <div>
+        <label for="uen"><span style="color:red;font-size:20px;">*</span>UEN:</label>
+        <input type="text" id="uen" placeholder="Enter UEN" required aria-required="true">
+      </div>
+      <div>
+        <label for="amount">Amount:</label>
+        <input type="number" id="amount" placeholder="Enter amount" min="0" step="0.01">
+      </div>
+      <div>
+        <label for="expiry">Expiry Date:</label>
+        <input type="date" id="expiry">
+      </div>
+      <div>
+        <label for="refNumber">Reference Number:</label>
+        <input type="text" id="refNumber" placeholder="Enter reference number">
+      </div>
+      <div>
+        <label for="company">Company Name:</label>
+        <input type="text" id="company" placeholder="Enter company name">
+      </div>
+      <button id="generate-qr">Generate QR Code</button>
+      <div id="success-message">QR Code generated successfully!</div>
+      <div id="error-message">Please fill in all required fields correctly.</div>
+      <div id="qr-code">
+        <canvas id="qr-canvas"></canvas>
+      </div>
+    </div>
+
+    <script>
+      document.getElementById('generate-qr').addEventListener('click', function() {
+        let uen = document.getElementById('uen').value;
+        let amount = parseFloat(document.getElementById('amount').value);
+        let expiry = document.getElementById('expiry').value.replace(/-/g, '');
+        let refNumber = document.getElementById('refNumber').value;
+        let company = document.getElementById('company').value;
+
+        // Basic validation
+        if(uen === "") {
+          document.getElementById('error-message').innerText = "Please input the UEN before generating the PayNow QR code.";
+          document.getElementById('error-message').style.display = "block";
+          document.getElementById('success-message').style.display = "none";
+          document.getElementById('uen').focus();
+          return;
+        }
+
+        let qrcode = new PaynowQR({
+          uen: uen,
+          amount: amount,
+          editable: true,
+          expiry: expiry,
+          refNumber: refNumber,
+          company: company
+        });
+
+        let QRstring = qrcode.output();
+        updateQrCode(QRstring);
+        document.getElementById('success-message').style.display = "block";
+        document.getElementById('error-message').style.display = "none";
+      });
+
+      function updateQrCode(QRstring) {
+        let qrCanvas = document.getElementById('qr-canvas');
+        let qr = new QRious({
+          element: qrCanvas,
+          value: QRstring,
+          size: 512,
+          foreground: '#79207a',
+          background: '#ffffff'
+        });
+        qrCanvas.style.display = "unset";
+
+        // Load the logo image
+        let logoUrl = './img/paynow_logo.jpg';
+        let logoImg = new Image();
+        logoImg.src = logoUrl;
+        logoImg.onload = function() {
+          let ctx = qrCanvas.getContext('2d');
+          let logoWidth = 100; // Width of the logo
+          let logoHeight = 60; // Height of the logo
+          let x = (qrCanvas.width - logoWidth) / 2; // Center the logo horizontally
+          let y = (qrCanvas.height - logoHeight) / 2; // Center the logo vertically
+
+          ctx.drawImage(logoImg, x, y, logoWidth, logoHeight);
+        };
+      }
+    </script>
+  </body>
+</html>
