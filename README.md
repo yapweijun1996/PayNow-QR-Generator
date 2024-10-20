@@ -28,3 +28,9 @@ PayNow QR JavaScript library<br>
 Prerequisites<br>
 A modern web browser<br>
 Basic knowledge of HTML, CSS, and JavaScript<br>
+
+## Usage
+1. Fill in the required fields (UEN, Amount).
+2. Optionally, fill in the expiry date, reference number, and company name.
+3. Click the "Generate QR Code" button.
+4. The generated QR code will be displayed below the button, along with a success message.
