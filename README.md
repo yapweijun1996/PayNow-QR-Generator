@@ -29,6 +29,9 @@ Prerequisites<br>
 A modern web browser<br>
 Basic knowledge of HTML, CSS, and JavaScript<br>
 
+## Demo
+### Codepen
+https://codepen.io/yapweijun1996/pen/oNKeBLz
 ## Usage
 1. Fill in the required fields (UEN, Amount).
 2. Optionally, fill in the expiry date, reference number, and company name.
