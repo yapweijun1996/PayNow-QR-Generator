@@ -165,6 +165,7 @@
     expiryInput.value = entry.expiry || "";
     refNumberInput.value = entry.refNumber || "";
     companyInput.value = entry.company || "";
+    isLoadingFromHistory = true;
     form.requestSubmit();
   }
 
@@ -245,17 +246,21 @@
     qrOutput.classList.add("visible");
     qrOutput.scrollIntoView({ behavior: "smooth", block: "nearest" });
 
-    // Save to history
-    const entry = {
-      uen: uen,
-      amount: amountInput.value.trim(),
-      expiry: expiryInput.value,
-      refNumber: refNumber,
-      company: company,
-      timestamp: Date.now(),
-    };
-    saveToHistory(entry);
-    getAllHistory().then(renderHistory);
+    // Save to history (skip if loading from history)
+    if (isLoadingFromHistory) {
+      isLoadingFromHistory = false;
+    } else {
+      const entry = {
+        uen: uen,
+        amount: amountInput.value.trim(),
+        expiry: expiryInput.value,
+        refNumber: refNumber,
+        company: company,
+        timestamp: Date.now(),
+      };
+      saveToHistory(entry);
+      getAllHistory().then(renderHistory);
+    }
   });
 
   uenInput.addEventListener("input", () => {
