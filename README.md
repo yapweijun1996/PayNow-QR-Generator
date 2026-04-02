@@ -1,47 +1,59 @@
 # PayNow QR Generator
-## Overview
-The PayNow QR Generator is a simple web application that allows users to generate a PayNow QR code by entering relevant payment information. This tool is particularly useful for businesses and individuals who want to facilitate easy payments through QR codes.
+
+A lightweight, client-side web application for generating Singapore PayNow QR codes. No backend, no signup — works entirely in the browser.
 
 ## Features
-### UEN Input: 
-Users can enter their Unique Entity Number (UEN) to identify their business.
-### Amount Field: 
-Specify the amount to be paid.
-### Expiry Date: 
-Optionally set an expiry date for the QR code.
-### Reference Number: 
-Optionally include a reference number for tracking payments.
-### Company Name: 
-Optionally enter the name of the company.
-### QR Code Generation: 
-Generates a QR code based on the provided details.
-### Custom Logo Support: 
-Allows you to add a logo to the QR code.
+
+- **UEN Input** — Enter your Unique Entity Number to identify your business
+- **Amount Field** — Specify the payment amount (with S$ prefix)
+- **Expiry Date** — Optionally set an expiry date for the QR code
+- **Reference Number** — Include a reference number for payment tracking
+- **Company Name** — Display your company name on the QR code
+- **QR Code Generation** — Generates EMVCO-compliant PayNow QR codes
+- **Custom Logo Overlay** — PayNow logo centered on the QR code
+- **Download as PNG** — Export QR code in multiple sizes (256 / 512 / 1024 px)
+- **Custom Filename** — Downloads named as `PayNow_{Company}_{Amount}.png`
+- **Print-Friendly** — Clean print layout showing only the QR code
+- **Mobile Responsive** — Optimized for all screen sizes
+- **Accessible** — ARIA attributes, focus management, and keyboard-friendly
+
 ## Technologies Used
-HTML5<br>
-CSS3<br>
-JavaScript<br>
-jQuery<br>
-QRious Library for QR code generation<br>
-PayNow QR JavaScript library<br>
+
+- HTML5
+- CSS3 (CSS custom properties, flexbox)
+- Vanilla JavaScript (ES6)
+- [QRious](https://github.com/neocotic/qrious) — QR code canvas rendering
+- [PayNow QR](https://github.com/nickolanack/PaynowQR) — EMVCO PayNow string generation
+
 ## Getting Started
-Prerequisites<br>
-A modern web browser<br>
-Basic knowledge of HTML, CSS, and JavaScript<br>
+
+### Prerequisites
+
+- A modern web browser (Chrome, Firefox, Safari, Edge)
+
+### Setup
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/yapweijun1996/PayNow-QR-Generator.git
+   ```
+2. Open `index.html` in your browser — no build step required.
 
 ## Usage
-1. Fill in the required fields (UEN, Amount).
-2. Optionally, fill in the expiry date, reference number, and company name.
-3. Click the "Generate QR Code" button.
-4. The generated QR code will be displayed below the button, along with a success message.
+
+1. Enter your **UEN** (required).
+2. Optionally fill in the amount, expiry date, reference number, and company name.
+3. Click **Generate QR Code**.
+4. Select your preferred download size and click **Download PNG**.
 
 ## Demo
-### Codepen
-https://codepen.io/yapweijun1996/pen/oNKeBLz
 
-### Github
-https://yapweijun1996.github.io/PayNow-QR-Generator/
+**Live:** https://yapweijun1996.github.io/PayNow-QR-Generator/
 
+**CodePen:** https://codepen.io/yapweijun1996/pen/oNKeBLz
 
-<img width="411" alt="Paynow QR Generator yapweijun1996" src="https://github.com/user-attachments/assets/6a3d9ec4-85f5-4103-91c8-a8be702d1071">
+<img width="411" alt="PayNow QR Generator" src="https://github.com/user-attachments/assets/6a3d9ec4-85f5-4103-91c8-a8be702d1071">
 
+## License
+
+This project uses the [QRious](https://github.com/neocotic/qrious) library (GPL v3).
