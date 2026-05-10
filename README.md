@@ -31,7 +31,7 @@ A lightweight, client-side web application for generating Singapore PayNow QR co
 - Vanilla JavaScript (ES6, no build step)
 - Service Worker (versioned cache + stale-while-revalidate + offline fallback)
 - [qrcode-generator](https://github.com/kazuhikoarase/qrcode-generator) — QR code generation (**MIT**, by Kazuhiko Arase)
-- PaynowQR (vendored) — EMVCO PayNow string generation
+- `js/paynow.js` — own EMVCO PayNow TLV builder (**MIT**, ~80 lines, no dependencies)
 
 ## Run locally
 
@@ -82,8 +82,12 @@ After deploy, submit the sitemap in [Google Search Console](https://search.googl
 
 ## License
 
-Project source: MIT.
+**[MIT](LICENSE)** — free for any use, including commercial closed-source products. No copyleft, no attribution required at runtime, no royalties.
 
-Bundled libraries:
-- [qrcode-generator](https://github.com/kazuhikoarase/qrcode-generator) — **MIT** (commercial-friendly, can be used in closed-source products).
-- `js/paynowqr.min.js` — vendored EMVCO PayNow string builder. Original upstream repo is no longer reachable, so its license is unconfirmed. **For closed-source commercial use, replace this with an in-house EMVCO TLV implementation** (the PayNow QR format is publicly documented by SGQR / EMVCO).
+Every file shipped in this repository is MIT-licensed:
+
+- Project source code (Yap Wei Jun, 2026)
+- [`js/paynow.js`](js/paynow.js) — own EMVCO PayNow TLV builder, written from the public SGQR / EMVCO Merchant Presented Mode specification
+- [`js/qrcode-generator.js`](js/qrcode-generator.js) — Kazuhiko Arase, 2009
+
+You can fork it, sell it, embed it in a paid SaaS, or ship it inside a closed-source app — just keep the MIT notice somewhere in your distribution (the bundled [LICENSE](LICENSE) file is enough).

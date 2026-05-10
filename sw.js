@@ -1,5 +1,5 @@
 // Bump VERSION on every release. Old caches are deleted on activate.
-const VERSION = "2026-05-10-2";
+const VERSION = "2026-05-10-3";
 const CACHE_NAME = `paynow-qr-${VERSION}`;
 const OFFLINE_URL = "./offline.html";
 
@@ -9,7 +9,7 @@ const PRECACHE = [
   "./offline.html",
   "./styles.css",
   "./js/app.js",
-  "./js/paynowqr.min.js",
+  "./js/paynow.js",
   "./js/qrcode-generator.js",
   "./img/paynow_logo.jpg",
   "./img/favicon.svg",
