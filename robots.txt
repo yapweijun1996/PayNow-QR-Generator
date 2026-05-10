@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://yapweijun1996.github.io/PayNow-QR-Generator/sitemap.xml

@@ -39,7 +39,43 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 24px 16px;
+  /* iOS safe-area: notch / Dynamic Island / home indicator never overlap. */
+  padding-top: max(24px, env(safe-area-inset-top));
+  padding-right: max(16px, env(safe-area-inset-right));
+  padding-bottom: max(24px, env(safe-area-inset-bottom));
+  padding-left: max(16px, env(safe-area-inset-left));
+}
+
+/* === Update banner === */
+.update-banner {
+  position: fixed;
+  top: env(safe-area-inset-top, 0);
+  left: 0;
+  right: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 10px 16px;
+  background: var(--primary);
+  color: #fff;
+  font-size: 0.875rem;
+  font-weight: 500;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+.update-banner[hidden] {
+  display: none;
+}
+.update-banner button {
+  background: #fff;
+  color: var(--primary);
+  border: 0;
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.8125rem;
+  cursor: pointer;
 }
 
 .container {
@@ -191,6 +227,25 @@ body {
 
 .btn-success:hover {
   background-color: var(--success-hover);
+}
+
+/* "Try with sample data" link-style button under primary CTA */
+.btn-sample {
+  display: block;
+  width: 100%;
+  text-align: center;
+  margin-top: 10px;
+  padding: 8px;
+  font-size: 0.8125rem;
+  color: var(--text-secondary);
+  background: none;
+  border: 0;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.btn-sample:hover {
+  color: var(--primary);
 }
 
 /* === Messages === */

@@ -2,6 +2,8 @@
 
 A lightweight, client-side web application for generating Singapore PayNow QR codes. No backend, no signup — works entirely in the browser.
 
+**Live demo**: https://yapweijun1996.github.io/PayNow-QR-Generator/
+
 ## Features
 
 - **UEN Input** — Enter your Unique Entity Number to identify your business
@@ -11,48 +13,72 @@ A lightweight, client-side web application for generating Singapore PayNow QR co
 - **Company Name** — Display your company name on the QR code
 - **QR Code Generation** — Generates EMVCO-compliant PayNow QR codes
 - **Custom Logo Overlay** — PayNow logo centered on the QR code
+- **Try with sample data** — One-click demo so first-time visitors see the result instantly
 - **Download as PNG** — Export QR code in multiple sizes (256 / 512 / 1024 px)
 - **Custom Filename** — Downloads named as `PayNow_{Company}_{Amount}.png`
+- **History (IndexedDB)** — Recent QR codes saved locally for quick re-use
 - **Print-Friendly** — Clean print layout showing only the QR code
+- **PWA + Offline** — Installable to home screen, works offline once loaded
+- **Auto-update prompt** — Banner notifies you when a new version is available
+- **iOS Safe-area aware** — Notch / Dynamic Island never overlap content
 - **Mobile Responsive** — Optimized for all screen sizes
-- **Accessible** — ARIA attributes, focus management, and keyboard-friendly
+- **Accessible** — ARIA attributes, focus management, keyboard-friendly
+- **SEO-ready** — Open Graph, Twitter Card, JSON-LD `WebApplication` schema, sitemap
 
-## Technologies Used
+## Technologies
 
-- HTML5
-- CSS3 (CSS custom properties, flexbox)
-- Vanilla JavaScript (ES6)
+- HTML5 / CSS3 (custom properties, flexbox, `env(safe-area-inset-*)`)
+- Vanilla JavaScript (ES6, no build step)
+- Service Worker (versioned cache + stale-while-revalidate + offline fallback)
 - [QRious](https://github.com/neocotic/qrious) — QR code canvas rendering
 - [PayNow QR](https://github.com/nickolanack/PaynowQR) — EMVCO PayNow string generation
 
-## Getting Started
+## Run locally
 
-### Prerequisites
+No build step. Open `index.html` in a modern browser, or serve over HTTP:
 
-- A modern web browser (Chrome, Firefox, Safari, Edge)
+```bash
+python3 -m http.server 8000
+# then visit http://localhost:8000
+```
 
-### Setup
+A local HTTP server is recommended over `file://` so the Service Worker registers correctly.
 
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/yapweijun1996/PayNow-QR-Generator.git
-   ```
-2. Open `index.html` in your browser — no build step required.
+## Deploy — GitHub Pages via GitHub Actions
+
+This repo ships with [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml) which deploys the entire repo root to GitHub Pages on every push to `main`.
+
+**One-time setup**:
+1. GitHub repo → **Settings** → **Pages** → **Build and deployment** → **Source** → **GitHub Actions**.
+2. Push to `main`. The workflow runs automatically. The site URL appears under the workflow run.
+
+**Manual trigger**: Actions tab → *Deploy to GitHub Pages* → *Run workflow*.
+
+## SEO
+
+GitHub Pages serves static HTML over HTTPS with no `noindex` header — Google indexes it normally. This project ships:
+
+- `<title>`, `<meta name="description">`, canonical URL
+- Open Graph + Twitter Card for social previews
+- JSON-LD `WebApplication` structured data for Google rich results
+- [`robots.txt`](robots.txt) + [`sitemap.xml`](sitemap.xml)
+- Semantic HTML (`<main>`, `<header>`, `<section>`, `<footer>`)
+
+After deploy, submit the sitemap in [Google Search Console](https://search.google.com/search-console) to speed up indexing.
+
+## PWA notes
+
+- `sw.js` uses versioned cache (`paynow-qr-${VERSION}`). Bump `VERSION` on every release; old caches are deleted on activate.
+- Strategy: navigation requests are *network-first* (you always see fresh HTML when online); same-origin GETs are *stale-while-revalidate*.
+- A new Service Worker waits in the background and triggers an in-page banner — the user controls the moment of reload, so half-typed forms aren't lost.
+- Offline navigations fall back to [`offline.html`](offline.html).
 
 ## Usage
 
-1. Enter your **UEN** (required).
+1. Enter your **UEN** (required), or click *Try with sample data*.
 2. Optionally fill in the amount, expiry date, reference number, and company name.
 3. Click **Generate QR Code**.
 4. Select your preferred download size and click **Download PNG**.
-
-## Demo
-
-**Live:** https://yapweijun1996.github.io/PayNow-QR-Generator/
-
-**CodePen:** https://codepen.io/yapweijun1996/pen/oNKeBLz
-
-<img width="411" alt="PayNow QR Generator" src="https://github.com/user-attachments/assets/6a3d9ec4-85f5-4103-91c8-a8be702d1071">
 
 ## License
 

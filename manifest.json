@@ -1,14 +1,18 @@
 {
+  "id": "/PayNow-QR-Generator/",
   "name": "PayNow QR Generator",
   "short_name": "PayNow QR",
   "description": "Generate Singapore PayNow QR codes instantly. Free, offline-capable, no signup required.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
   "background_color": "#f0f2f5",
   "theme_color": "#7b2d8e",
   "orientation": "portrait-primary",
-  "categories": ["finance", "utilities"],
+  "lang": "en-SG",
+  "dir": "ltr",
+  "categories": ["finance", "utilities", "productivity"],
   "icons": [
     {
       "src": "./img/favicon.svg",

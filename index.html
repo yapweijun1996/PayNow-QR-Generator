@@ -1,25 +1,85 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-SG" dir="ltr">
   <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Generate Singapore PayNow QR codes instantly. Free, offline-capable, no signup required.">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
+    <title>PayNow QR Generator — Free Singapore PayNow QR Code Maker</title>
+    <meta name="description" content="Free Singapore PayNow QR code generator. Create EMVCO-compliant PayNow QR codes from your UEN with custom amount, expiry, reference number, and company name. 100% client-side, offline-capable, no signup. Open source.">
+    <meta name="keywords" content="PayNow, QR code, Singapore, UEN, EMVCO, payment, generator, free, offline, PWA">
+    <meta name="author" content="Yap Wei Jun">
+    <meta name="robots" content="index, follow">
     <meta name="theme-color" content="#7b2d8e">
-    <title>PayNow QR Generator</title>
-    <link rel="stylesheet" href="styles.css">
-    <link rel="icon" href="./img/favicon.svg" type="image/svg+xml">
+    <meta name="color-scheme" content="light">
+
+    <link rel="canonical" href="https://yapweijun1996.github.io/PayNow-QR-Generator/">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="PayNow QR Generator — Free Singapore PayNow QR Code Maker">
+    <meta property="og:description" content="Generate Singapore PayNow QR codes instantly. Free, offline-capable, no signup required.">
+    <meta property="og:url" content="https://yapweijun1996.github.io/PayNow-QR-Generator/">
+    <meta property="og:image" content="https://yapweijun1996.github.io/PayNow-QR-Generator/img/og-image.png">
+    <meta property="og:image:alt" content="PayNow QR Generator app screenshot">
+    <meta property="og:locale" content="en_SG">
+    <meta property="og:site_name" content="PayNow QR Generator">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="PayNow QR Generator">
+    <meta name="twitter:description" content="Free Singapore PayNow QR code generator. Client-side, offline-capable, no signup.">
+    <meta name="twitter:image" content="https://yapweijun1996.github.io/PayNow-QR-Generator/img/og-image.png">
+
+    <!-- PWA -->
     <link rel="manifest" href="./manifest.json">
+    <link rel="icon" href="./img/favicon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="./img/favicon.svg">
     <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="PayNow QR">
-    <link rel="apple-touch-icon" href="./img/favicon.svg">
+
+    <link rel="stylesheet" href="styles.css">
+
+    <!-- Structured data: SoftwareApplication for Google rich result -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "PayNow QR Generator",
+      "url": "https://yapweijun1996.github.io/PayNow-QR-Generator/",
+      "description": "Free Singapore PayNow QR code generator. Create EMVCO-compliant PayNow QR codes from your UEN. 100% client-side, offline-capable, no signup.",
+      "applicationCategory": "FinanceApplication",
+      "operatingSystem": "Any",
+      "browserRequirements": "Requires JavaScript. Requires HTML5.",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "SGD"
+      },
+      "author": {
+        "@type": "Person",
+        "name": "Yap Wei Jun",
+        "url": "https://github.com/yapweijun1996"
+      },
+      "inLanguage": "en-SG",
+      "isAccessibleForFree": true,
+      "softwareVersion": "1.1.0"
+    }
+    </script>
   </head>
   <body>
-    <div class="container">
-      <div class="header">
+    <!-- Update banner: shown when a new SW is installed and waiting -->
+    <div class="update-banner" id="update-banner" role="status" aria-live="polite" hidden>
+      <span>A new version is available.</span>
+      <button type="button" id="update-reload">Reload</button>
+    </div>
+
+    <main class="container">
+      <header class="header">
         <h1>PayNow QR Generator</h1>
         <p>Generate PayNow QR codes for Singapore payments</p>
-      </div>
+      </header>
 
       <form id="qr-form" novalidate>
         <div class="form-group">
@@ -54,6 +114,9 @@
         <button type="submit" class="btn btn-primary" id="generate-qr">
           Generate QR Code
         </button>
+        <button type="button" class="btn-text btn-sample" id="load-sample">
+          Try with sample data
+        </button>
       </form>
 
       <div class="message message-success" id="success-message" role="status" aria-live="polite">
@@ -61,7 +124,7 @@
       </div>
       <div class="message message-error" id="error-message" role="alert" aria-live="assertive"></div>
 
-      <div class="qr-output" id="qr-output">
+      <section class="qr-output" id="qr-output" aria-label="Generated QR code">
         <div class="qr-wrapper">
           <canvas id="qr-canvas"></canvas>
         </div>
@@ -72,7 +135,7 @@
             <option value="1024">1024 x 1024 px</option>
           </select>
           <button type="button" class="btn btn-success" id="download-qr">
-            <svg class="icon-download" viewBox="0 0 24 24">
+            <svg class="icon-download" viewBox="0 0 24 24" aria-hidden="true">
               <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
               <polyline points="7 10 12 15 17 10"/>
               <line x1="12" y1="15" x2="12" y2="3"/>
@@ -80,21 +143,20 @@
             Download PNG
           </button>
         </div>
-      </div>
+      </section>
 
-      <!-- History -->
-      <div class="history-section" id="history-section" style="display:none;">
+      <section class="history-section" id="history-section" style="display:none;" aria-label="Saved history">
         <div class="history-header">
           <h2>History</h2>
           <button type="button" class="btn-text" id="clear-history">Clear All</button>
         </div>
         <div id="history-list"></div>
-      </div>
+      </section>
 
-      <div class="footer">
+      <footer class="footer">
         <p>Built for Singapore PayNow &middot; <a href="https://github.com/yapweijun1996/PayNow-QR-Generator" target="_blank" rel="noopener">GitHub</a></p>
-      </div>
-    </div>
+      </footer>
+    </main>
 
     <script src="./js/paynowqr.min.js"></script>
     <script src="./js/qrious.min.js"></script>

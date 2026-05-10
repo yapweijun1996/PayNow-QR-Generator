@@ -14,6 +14,14 @@
   const DB_VERSION = 1;
   const STORE_NAME = "history";
 
+  const SAMPLE = {
+    uen: "201812345A",
+    amount: "25.00",
+    expiry: "",
+    refNumber: "INV-2024-001",
+    company: "Demo Pte Ltd",
+  };
+
   // ============================================================
   // DOM refs
   // ============================================================
@@ -33,6 +41,9 @@
   const historyList = $("history-list");
   const historySection = $("history-section");
   const clearHistoryBtn = $("clear-history");
+  const sampleBtn = $("load-sample");
+  const updateBanner = $("update-banner");
+  const updateReloadBtn = $("update-reload");
 
   // ============================================================
   // State
@@ -170,19 +181,24 @@
   }
 
   // ============================================================
-  // Logo preloader
+  // Logo preloader (returns a promise so the first submit always has the logo)
   // ============================================================
   let logoImg = null;
+  let logoReady = null;
 
   function preloadLogo() {
-    const img = new Image();
-    img.onload = () => {
-      logoImg = img;
-    };
-    img.onerror = () => {
-      logoImg = null;
-    };
-    img.src = LOGO_SRC;
+    logoReady = new Promise((resolve) => {
+      const img = new Image();
+      img.onload = () => {
+        logoImg = img;
+        resolve();
+      };
+      img.onerror = () => {
+        logoImg = null;
+        resolve();
+      };
+      img.src = LOGO_SRC;
+    });
   }
 
   // ============================================================
@@ -211,7 +227,7 @@
   // ============================================================
   // Form submission
   // ============================================================
-  form.addEventListener("submit", (e) => {
+  form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
     const uen = uenInput.value.trim();
@@ -239,6 +255,10 @@
     });
 
     currentQRString = qrcode.output();
+
+    // Wait for logo to finish loading on first submit so the QR is never logo-less.
+    await logoReady;
+
     renderQR(qrCanvas, currentQRString, BASE_SIZE);
     qrCanvas.style.display = "block";
 
@@ -246,7 +266,6 @@
     qrOutput.classList.add("visible");
     qrOutput.scrollIntoView({ behavior: "smooth", block: "nearest" });
 
-    // Save to history (skip if loading from history)
     if (isLoadingFromHistory) {
       isLoadingFromHistory = false;
     } else {
@@ -266,6 +285,21 @@
   uenInput.addEventListener("input", () => {
     uenInput.classList.remove("input-error");
   });
+
+  // ============================================================
+  // Sample loader (demo helper)
+  // ============================================================
+  function loadSample() {
+    uenInput.value = SAMPLE.uen;
+    amountInput.value = SAMPLE.amount;
+    expiryInput.value = SAMPLE.expiry;
+    refNumberInput.value = SAMPLE.refNumber;
+    companyInput.value = SAMPLE.company;
+    uenInput.classList.remove("input-error");
+    isLoadingFromHistory = true; // don't pollute history with the demo entry
+    form.requestSubmit();
+  }
+  if (sampleBtn) sampleBtn.addEventListener("click", loadSample);
 
   // ============================================================
   // Messages
@@ -290,7 +324,7 @@
     const company = companyInput.value.trim();
     const amount = amountInput.value.trim();
     if (company)
-      parts.push(company.replace(/[^a-zA-Z0-9\u4e00-\u9fff]/g, "_"));
+      parts.push(company.replace(/[^a-zA-Z0-9一-鿿]/g, "_"));
     if (amount) parts.push(amount);
     return parts.join("_") + ".png";
   }
@@ -332,16 +366,58 @@
   });
 
   // ============================================================
-  // Service Worker registration
+  // Service Worker registration with update prompt
   // ============================================================
-  if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register("./sw.js").catch(() => {});
+  function showUpdateBanner(onAccept) {
+    if (!updateBanner) return onAccept();
+    updateBanner.hidden = false;
+    updateReloadBtn?.addEventListener("click", () => onAccept(), { once: true });
+  }
+
+  function registerSW() {
+    if (!("serviceWorker" in navigator)) return;
+
+    navigator.serviceWorker
+      .register("./sw.js")
+      .then((reg) => {
+        // A new SW found while the page is already controlled → it's an update.
+        reg.addEventListener("updatefound", () => {
+          const newWorker = reg.installing;
+          if (!newWorker) return;
+          newWorker.addEventListener("statechange", () => {
+            if (
+              newWorker.state === "installed" &&
+              navigator.serviceWorker.controller
+            ) {
+              showUpdateBanner(() => {
+                newWorker.postMessage({ type: "SKIP_WAITING" });
+              });
+            }
+          });
+        });
+
+        // Periodic update probe — once per hour and on tab refocus.
+        setInterval(() => reg.update().catch(() => {}), 60 * 60 * 1000);
+        document.addEventListener("visibilitychange", () => {
+          if (document.visibilityState === "visible") reg.update().catch(() => {});
+        });
+      })
+      .catch(() => {});
+
+    // After SKIP_WAITING activates the new SW, the browser swaps controllers — reload once.
+    let refreshing = false;
+    navigator.serviceWorker.addEventListener("controllerchange", () => {
+      if (refreshing) return;
+      refreshing = true;
+      window.location.reload();
+    });
   }
 
   // ============================================================
   // Init
   // ============================================================
   preloadLogo();
+  registerSW();
   openDB()
     .then(() => getAllHistory())
     .then(renderHistory)
