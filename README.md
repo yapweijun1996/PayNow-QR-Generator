@@ -30,8 +30,8 @@ A lightweight, client-side web application for generating Singapore PayNow QR co
 - HTML5 / CSS3 (custom properties, flexbox, `env(safe-area-inset-*)`)
 - Vanilla JavaScript (ES6, no build step)
 - Service Worker (versioned cache + stale-while-revalidate + offline fallback)
-- [QRious](https://github.com/neocotic/qrious) — QR code canvas rendering
-- [PayNow QR](https://github.com/nickolanack/PaynowQR) — EMVCO PayNow string generation
+- [qrcode-generator](https://github.com/kazuhikoarase/qrcode-generator) — QR code generation (**MIT**, by Kazuhiko Arase)
+- PaynowQR (vendored) — EMVCO PayNow string generation
 
 ## Run locally
 
@@ -82,4 +82,8 @@ After deploy, submit the sitemap in [Google Search Console](https://search.googl
 
 ## License
 
-This project uses the [QRious](https://github.com/neocotic/qrious) library (GPL v3).
+Project source: MIT.
+
+Bundled libraries:
+- [qrcode-generator](https://github.com/kazuhikoarase/qrcode-generator) — **MIT** (commercial-friendly, can be used in closed-source products).
+- `js/paynowqr.min.js` — vendored EMVCO PayNow string builder. Original upstream repo is no longer reachable, so its license is unconfirmed. **For closed-source commercial use, replace this with an in-house EMVCO TLV implementation** (the PayNow QR format is publicly documented by SGQR / EMVCO).

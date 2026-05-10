@@ -213,14 +213,36 @@
     ctx.drawImage(logoImg, (size - w) / 2, (size - h) / 2, w, h);
   }
 
+  // Render a QR code to <canvas> using qrcode-generator (MIT, Kazuhiko Arase).
+  // Type 0 = auto-pick smallest version; error correction "M" = ~15%, enough
+  // to survive the centered logo overlay we draw afterwards.
   function renderQR(canvas, qrString, size) {
-    new QRious({
-      element: canvas,
-      value: qrString,
-      size: size,
-      foreground: QR_COLOR,
-      background: QR_BG,
-    });
+    const qr = qrcode(0, "M");
+    qr.addData(qrString);
+    qr.make();
+
+    const moduleCount = qr.getModuleCount();
+    const margin = 4; // quiet zone in modules, EMVCO/PayNow scanners expect >=4
+    const cellSize = size / (moduleCount + margin * 2);
+
+    canvas.width = size;
+    canvas.height = size;
+    const ctx = canvas.getContext("2d");
+    ctx.fillStyle = QR_BG;
+    ctx.fillRect(0, 0, size, size);
+    ctx.fillStyle = QR_COLOR;
+    for (let r = 0; r < moduleCount; r++) {
+      for (let c = 0; c < moduleCount; c++) {
+        if (qr.isDark(r, c)) {
+          ctx.fillRect(
+            (c + margin) * cellSize,
+            (r + margin) * cellSize,
+            cellSize,
+            cellSize
+          );
+        }
+      }
+    }
     drawLogo(canvas, size);
   }
 
@@ -343,18 +365,7 @@
   downloadBtn.addEventListener("click", () => {
     const size = parseInt(sizeSelect.value);
     const offscreen = document.createElement("canvas");
-    offscreen.width = size;
-    offscreen.height = size;
-
-    new QRious({
-      element: offscreen,
-      value: currentQRString,
-      size: size,
-      foreground: QR_COLOR,
-      background: QR_BG,
-    });
-
-    drawLogo(offscreen, size);
+    renderQR(offscreen, currentQRString, size);
     exportCanvas(offscreen);
   });
 
